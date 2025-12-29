@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking System Overbooking – Problem & Solution</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            margin: 0;
+            color: #ffffff;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #ffd369;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0,0,0,0.35);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .bad { color: #ff6b6b; }
+        .good { color: #4dd599; }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-bad { background: #ff6b6b; color: #000; }
+        .btn-good { background: #4dd599; color: #000; }
+        .btn-reset { background: #ffd369; color: #000; }
+
+        pre {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            font-size: 14px;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Flight Booking System – Overbooking Case Study</h1>
+    <p>Operating Systems | Critical Section & Synchronization</p>
+</header>
+
+<div class="container">
+
+    <!-- Real Case -->
+    <div class="card">
+        <h2>📌 Real Case: Centrum Air</h2>
+        <p>
+            Centrum Air sold more tickets than available seats.
+            This is a real-world example of a <strong>race condition</strong>
+            caused by improper handling of a <strong>critical section</strong>.
+        </p>
+    </div>
+
+    <!-- DEMO -->
+    <div class="card">
+        <h2>🧪 Live Booking Simulation</h2>
+
+        <button class="btn-bad" onclick="bookUnsafe()">Book Seat (UNSAFE)</button>
+        <button class="btn-good" onclick="bookSafe()">Book Seat (SAFE)</button>
+        <button class="btn-reset" onclick="resetSeats()">Reset Seats</button>
+
+        <pre id="result">Backend response will appear here...</pre>
+    </div>
+
+    <!-- Problem -->
+    <div class="card">
+        <h2 class="bad">❌ Problem: Overbooking (No Synchronization)</h2>
+        <p>
+            Multiple users access the critical section at the same time,
+            causing a read/write conflict.
+        </p>
+    </div>
+
+    <!-- Solution -->
+    <div class="card">
+        <h2 class="good">✅ Solution: Mutex Lock</h2>
+        <p>
+            A mutex ensures that only one booking request
+            modifies seat data at a time.
+        </p>
+    </div>
+
+</div>
+
+<footer>
+    <p>
+        Operating Systems Project – Critical Section & Synchronization<br>
+        Extra Project for Students at Risk of Failing
+    </p>
+</footer>
+
+<script>
+const API_URL = "http://127.0.0.1:5000";
+
+function bookUnsafe() {
+    console.log("clickced");
+    fetch(API_URL + "/book_unsafe")
+        .then(response => response.json())
+        .then(data => showResult(data));
+}
+
+function bookSafe() {
+    fetch(API_URL + "/book_safe")
+        .then(response => response.json())
+        .then(data => showResult(data));
+}
+
+function resetSeats() {
+    fetch(API_URL + "/reset")
+        .then(response => response.json())
+        .then(data => showResult(data));
+}
+
+function showResult(data) {
+
+    console.log("data", data);
+    const resultBox = document.getElementById("result");
+
+    resultBox.innerText =
+        "SERVER RESPONSE:\n\n" +
+        JSON.stringify(data, null, 2);
+
+    // Highlight success / failure
+    if (data.status === "SUCCESS") {
+        resultBox.style.color = "#4dd599";
+    } else {
+        resultBox.style.color = "#ff6b6b";
+    }
+}
+</script>
+
+
+</body>
+</html>
